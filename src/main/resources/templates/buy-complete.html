@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{buy.title}">購入完了</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <div class="page-box complete-shell">
+        <header class="site-header">
+            <a class="brand" href="/nazoshop">
+                <span class="brand-icon" aria-hidden="true">🏆</span>
+                <span class="brand-copy">
+                    <span class="brand-name">Mission Complete</span>
+                    <span class="brand-subtitle">Order Successfully Saved</span>
+                </span>
+            </a>
+
+            <nav class="language-switcher" aria-label="Language">
+                <a th:href="@{/buy-complete(lang='ja', orderId=${orderId})}">日本語</a>
+                <a th:href="@{/buy-complete(lang='en', orderId=${orderId})}">English</a>
+                <a th:href="@{/buy-complete(lang='zh', orderId=${orderId})}">中文</a>
+            </nav>
+        </header>
+
+        <main class="page-content">
+            <section class="complete-card">
+                <div class="complete-mark" aria-hidden="true">✓</div>
+                <span class="eyebrow">Order Clear</span>
+                <h1 th:text="#{buy.header}">購入が完了しました</h1>
+                <p class="hero-description" style="margin: 0 auto;" th:text="#{buy.thanks}">
+                    ご購入ありがとうございました。
+                </p>
+
+                <div class="order-id-box">
+                    <strong th:text="#{buy.orderid.label}">注文番号：</strong>
+                    <span th:text="${orderId}"></span>
+                </div>
+
+                <div class="action-row" style="justify-content: center;">
+                    <a class="button button-violet" href="/nazoshop" th:text="#{buy.back}">ショップへ戻る</a>
+                </div>
+            </section>
+
+            <p class="footer-note">THANK YOU FOR PLAYING</p>
+        </main>
+    </div>
+</body>
+
+</html>
