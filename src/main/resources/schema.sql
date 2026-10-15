@@ -1,0 +1,54 @@
+CREATE TABLE IF NOT EXISTS items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    category VARCHAR(50),
+    company VARCHAR(50),
+    price INT NOT NULL,
+    stock INT NOT NULL DEFAULT 10,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+ALTER TABLE items
+ADD COLUMN IF NOT EXISTS stock INT DEFAULT 10;
+
+ALTER TABLE items
+ADD COLUMN IF NOT EXISTS active BOOLEAN DEFAULT TRUE;
+
+UPDATE items
+SET stock = 10
+WHERE stock IS NULL;
+
+UPDATE items
+SET active = TRUE
+WHERE active IS NULL;
+
+CREATE TABLE IF NOT EXISTS customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id VARCHAR(36) PRIMARY KEY,
+    customer_id INT,
+    order_time TIMESTAMP NOT NULL,
+    total_price INT NOT NULL
+);
+
+ALTER TABLE orders
+ADD COLUMN IF NOT EXISTS customer_id INT;
+
+CREATE TABLE IF NOT EXISTS order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id VARCHAR(36) NOT NULL,
+    item_id INT,
+    item_name VARCHAR(100) NOT NULL,
+    price INT NOT NULL,
+    quantity INT NOT NULL,
+
+    CONSTRAINT fk_order_items_order
+        FOREIGN KEY (order_id)
+        REFERENCES orders(id)
+);
