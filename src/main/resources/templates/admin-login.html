@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{admin.login.title}">管理者ログイン</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <div class="page-box login-shell">
+        <header class="site-header">
+            <a class="brand" href="/nazoshop">
+                <span class="brand-icon" aria-hidden="true">🔐</span>
+                <span class="brand-copy">
+                    <span class="brand-name">Admin Access</span>
+                    <span class="brand-subtitle">Authorized Users Only</span>
+                </span>
+            </a>
+
+            <nav class="language-switcher" aria-label="Language">
+                <a href="?lang=ja">日本語</a>
+                <a href="?lang=en">English</a>
+                <a href="?lang=zh">中文</a>
+            </nav>
+        </header>
+
+        <main class="page-content">
+            <section class="login-card">
+                <span class="eyebrow">Control Room</span>
+                <h1 th:text="#{admin.login.title}">管理者ログイン</h1>
+
+                <p th:if="${error}" class="error-message" th:text="#{admin.login.error}"></p>
+
+                <form action="/admin/login" method="post" style="margin-top: 22px;">
+                    <div class="form-field">
+                        <label for="username" th:text="#{admin.login.username}">ユーザー名：</label>
+                        <input id="username" type="text" name="username" autocomplete="username" required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="password" th:text="#{admin.login.password}">パスワード：</label>
+                        <input id="password" type="password" name="password" autocomplete="current-password" required>
+                    </div>
+
+                    <div class="action-row">
+                        <input class="button-violet" type="submit" th:value="#{admin.login.btn}" value="ログイン">
+                        <a class="button button-secondary" href="/nazoshop" th:text="#{admin.back}">ショップへ戻る</a>
+                    </div>
+                </form>
+            </section>
+
+            <p class="footer-note">NAZO GAME STORE ADMIN CONSOLE</p>
+        </main>
+    </div>
+</body>
+
+</html>
