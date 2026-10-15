@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{cart.title}">ショッピングカート</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <div class="page-box">
+        <header class="site-header">
+            <a class="brand" href="/nazoshop">
+                <span class="brand-icon" aria-hidden="true">🛒</span>
+                <span class="brand-copy">
+                    <span class="brand-name">Player Cart</span>
+                    <span class="brand-subtitle">Review Your Loadout</span>
+                </span>
+            </a>
+
+            <nav class="language-switcher" aria-label="Language">
+                <a href="?lang=ja">日本語</a>
+                <a href="?lang=en">English</a>
+                <a href="?lang=zh">中文</a>
+            </nav>
+        </header>
+
+        <main class="page-content">
+            <section class="hero">
+                <span class="eyebrow">Shopping Cart</span>
+                <h1 th:text="#{cart.header}">カートの中身</h1>
+            </section>
+
+            <section class="section-card" style="margin-top: 22px;">
+                <p th:if="${param.stockError != null}" class="error-message" th:text="#{stock.error}">在庫が不足しています。</p>
+
+                <p th:if="${cart.isEmpty()}" class="empty-state" th:text="#{cart.empty}">カートには商品が入っていません。</p>
+
+                <div class="table-scroll" th:if="${!cart.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th th:text="#{cart.table.name}">商品名</th>
+                                <th th:text="#{cart.table.price}">単価</th>
+                                <th th:text="#{cart.table.quantity}">個数</th>
+                                <th th:text="#{cart.table.subtotal}">小計</th>
+                                <th th:text="#{cart.table.action}">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${cart}">
+                                <td th:text="${item.name}"></td>
+                                <td th:text="${item.price} + #{shop.currency.suffix}"></td>
+                                <td>
+                                    <form class="table-form" action="/updateQuantity" method="post">
+                                        <input type="hidden" name="itemId" th:value="${item.id}">
+                                        <input type="number" name="quantity" min="1" max="99"
+                                            th:value="${item.quantity}" required>
+                                        <input type="submit" th:value="#{cart.btn.update}" value="個数変更">
+                                    </form>
+                                    <small>
+                                        <span th:text="#{cart.stock.label}">現在の在庫：</span>
+                                        <span th:text="${stockMap[item.id]}">10</span>
+                                        <span th:text="#{shop.stock.unit}">個</span>
+                                    </small>
+                                </td>
+                                <td th:text="${item.price * item.quantity} + #{shop.currency.suffix}"></td>
+                                <td>
+                                    <form class="table-form" action="/removeItem" method="post">
+                                        <input type="hidden" name="itemId" th:value="${item.id}">
+                                        <input class="button-danger" type="submit" th:value="#{cart.btn.remove}"
+                                            value="カートから削除" th:onclick="return confirm([[#{cart.confirm.remove}]]);">
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="total-panel" th:if="${!cart.isEmpty()}">
+                    <p class="total-label" th:text="#{cart.total.label}">合計金額：</p>
+                    <p class="total-value" th:text="${totalPrice} + #{shop.currency.suffix}">0円</p>
+                </div>
+
+                <div class="action-row">
+                    <form action="/checkout" method="get" th:if="${!cart.isEmpty()}" style="margin: 0;">
+                        <input class="button-violet" type="submit" th:value="#{cart.btn.buy}" value="購入手続きへ">
+                    </form>
+                    <a class="button button-secondary" href="/nazoshop" th:text="#{cart.back}">商品選択へ戻る</a>
+                </div>
+            </section>
+
+            <p class="footer-note">CHECK YOUR ITEMS BEFORE CHECKOUT</p>
+        </main>
+    </div>
+</body>
+
+</html>
