@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{shop.title}">🎮 ゲームハード・周辺機器ショップ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <div class="page-box">
+
+        <header class="site-header">
+            <a class="brand" href="/nazoshop">
+                <span class="brand-icon" aria-hidden="true">🎮</span>
+                <span class="brand-copy">
+                    <span class="brand-name">Nazo Game Store</span>
+                    <span class="brand-subtitle">Hardware &amp; Accessories</span>
+                </span>
+            </a>
+
+            <nav class="language-switcher" aria-label="Language">
+                <a
+                    th:href="@{/nazoshop(lang='ja', keyword=${selectedKeyword}, searchCompany=${selectedCompany})}">日本語</a>
+                <a
+                    th:href="@{/nazoshop(lang='en', keyword=${selectedKeyword}, searchCompany=${selectedCompany})}">English</a>
+                <a
+                    th:href="@{/nazoshop(lang='zh', keyword=${selectedKeyword}, searchCompany=${selectedCompany})}">中文</a>
+            </nav>
+        </header>
+
+        <main class="page-content">
+            <section class="hero">
+                <span class="eyebrow">Game Hardware Shop</span>
+                <h1 th:text="#{shop.title}">🎮 ゲームハード・周辺機器ショップ</h1>
+            </section>
+
+            <div class="section-grid">
+                <section class="section-card">
+                    <h2 class="section-title">
+                        <span class="section-icon" aria-hidden="true">🔎</span>
+                        <span th:text="#{shop.search.button}">検索</span>
+                    </h2>
+
+                    <form action="/nazoshop" method="get">
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="keyword" th:text="#{shop.search.keyword}">商品名：</label>
+                                <input id="keyword" type="text" name="keyword" th:value="${selectedKeyword}"
+                                    th:placeholder="#{shop.search.placeholder}">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="searchCompany" th:text="#{shop.filter}">会社で絞り込む：</label>
+                                <select id="searchCompany" name="searchCompany">
+                                    <option value="" th:selected="${selectedCompany == null || selectedCompany == ''}"
+                                        th:text="#{shop.filter.all}">すべて表示</option>
+                                    <option value="任天堂" th:selected="${selectedCompany == '任天堂'}"
+                                        th:text="#{shop.company.nintendo}">任天堂</option>
+                                    <option value="ソニー" th:selected="${selectedCompany == 'ソニー'}"
+                                        th:text="#{shop.company.sony}">ソニー</option>
+                                    <option value="マイクロソフト" th:selected="${selectedCompany == 'マイクロソフト'}"
+                                        th:text="#{shop.company.microsoft}">マイクロソフト</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="action-row">
+                            <input type="submit" th:value="#{shop.search.button}" value="検索">
+                            <a class="button button-secondary" href="/nazoshop"
+                                th:text="#{shop.search.reset}">検索条件を解除</a>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="section-card">
+                    <h2 class="section-title">
+                        <span class="section-icon" aria-hidden="true">🕹️</span>
+                        <span th:text="#{shop.btn.add.cart}">カートへ入れる</span>
+                    </h2>
+
+                    <p th:if="${param.stockError != null}" class="error-message" th:text="#{stock.error}">在庫が不足しています。
+                    </p>
+
+                    <p th:if="${#lists.isEmpty(items)}" class="empty-state" th:text="#{shop.search.noresult}">
+                        条件に合う商品が見つかりませんでした。</p>
+
+                    <form action="/addItem" method="post" th:if="${!#lists.isEmpty(items)}">
+                        <div class="form-field">
+                            <label for="itemId" th:text="#{shop.item.label}">商品：</label>
+                            <select id="itemId" name="itemId" required>
+                                <option th:each="item : ${items}" th:value="${item.id}" th:disabled="${item.stock <= 0}"
+                                    th:text="${item.name} + '（' + ${item.company} + '） ' + ${item.price} + #{shop.currency.suffix} + ' / ' + #{shop.stock.label} + ${item.stock} + #{shop.stock.unit}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="quantity" th:text="#{shop.quantity.label}">個数：</label>
+                            <select id="quantity" name="quantity">
+                                <option value="1" th:text="'1' + #{shop.quantity.unit}">1個</option>
+                                <option value="2" th:text="'2' + #{shop.quantity.unit}">2個</option>
+                                <option value="3" th:text="'3' + #{shop.quantity.unit}">3個</option>
+                                <option value="4" th:text="'4' + #{shop.quantity.unit}">4個</option>
+                                <option value="5" th:text="'5' + #{shop.quantity.unit}">5個</option>
+                            </select>
+                        </div>
+
+                        <div class="action-row">
+                            <input type="submit" th:value="#{shop.btn.add.cart}" value="カートへ入れる">
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <section class="section-card full-width" style="margin-top: 20px;">
+                <div class="action-row" style="margin-top: 0;">
+                    <a class="button button-violet" href="/nazocart" th:text="#{shop.cart.view}">カートを見る</a>
+                    <a class="button button-secondary" href="/admin/login" th:text="#{shop.admin.login}">管理者ログイン</a>
+                </div>
+            </section>
+
+            <p class="footer-note">NAZO GAME STORE SYSTEM</p>
+        </main>
+    </div>
+</body>
+
+</html>
