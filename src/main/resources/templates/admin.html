@@ -1,0 +1,233 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{admin.title}">管理者ページ</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <div class="page-box admin-page">
+        <header class="site-header">
+            <a class="brand" href="/admin">
+                <span class="brand-icon" aria-hidden="true">🛠️</span>
+                <span class="brand-copy">
+                    <span class="brand-name">Game Master Console</span>
+                    <span class="brand-subtitle">Store Administration</span>
+                </span>
+            </a>
+
+            <nav class="language-switcher" aria-label="Language">
+                <a href="?lang=ja">日本語</a>
+                <a href="?lang=en">English</a>
+                <a href="?lang=zh">中文</a>
+            </nav>
+        </header>
+
+        <main class="page-content">
+            <section class="hero">
+                <span class="eyebrow">Admin Dashboard</span>
+                <h1 th:text="#{admin.title}">管理者ページ</h1>
+
+                <form action="/admin/logout" method="post" class="action-row" style="position: relative; z-index: 1;">
+                    <input class="button-danger" type="submit" th:value="#{admin.logout}" value="ログアウト">
+                </form>
+            </section>
+
+            <div class="section-grid">
+                <section class="section-card">
+                    <h2 class="section-title">
+                        <span class="section-icon" aria-hidden="true">📊</span>
+                        <span th:text="#{admin.sales.title}">売上情報</span>
+                    </h2>
+
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <p class="stat-label" th:text="#{admin.sales.count}">注文数：</p>
+                            <div class="stat-value">
+                                <span th:text="${orderCount}">0</span>
+                                <small th:text="#{admin.sales.count.unit}">件</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <p class="stat-label" th:text="#{admin.sales.total}">総売上：</p>
+                            <div class="stat-value">
+                                <span th:text="${totalSales}">0</span>
+                                <small th:text="#{shop.currency.suffix}">円</small>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <h2 class="section-title">
+                        <span class="section-icon" aria-hidden="true">➕</span>
+                        <span th:text="#{admin.item.add.title}">商品追加</span>
+                    </h2>
+
+                    <form action="/admin/add-item" method="post">
+                        <div class="form-grid">
+                            <div class="form-field full-width">
+                                <label for="name" th:text="#{admin.item.name}">商品名：</label>
+                                <input id="name" type="text" name="name" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="category" th:text="#{admin.item.category}">カテゴリ：</label>
+                                <input id="category" type="text" name="category"
+                                    th:placeholder="#{admin.item.category.placeholder}">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="company" th:text="#{admin.item.company}">会社名：</label>
+                                <input id="company" type="text" name="company"
+                                    th:placeholder="#{admin.item.company.placeholder}">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="price" th:text="#{admin.item.price}">価格：</label>
+                                <input id="price" type="number" name="price" min="0" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="stock" th:text="#{admin.item.stock}">初期在庫：</label>
+                                <input id="stock" type="number" name="stock" min="0" value="10" required>
+                            </div>
+                        </div>
+
+                        <div class="action-row">
+                            <input type="submit" th:value="#{admin.item.add.btn}" value="商品を追加">
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <section class="section-card" style="margin-top: 20px;">
+                <h2 class="section-title">
+                    <span class="section-icon" aria-hidden="true">🎛️</span>
+                    <span th:text="#{admin.item.manage.title}">商品管理</span>
+                </h2>
+
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th th:text="#{admin.item.table.id}">ID</th>
+                                <th th:text="#{admin.item.table.name}">商品名</th>
+                                <th th:text="#{admin.item.table.category}">カテゴリ</th>
+                                <th th:text="#{admin.item.table.company}">会社</th>
+                                <th th:text="#{admin.item.table.price}">価格</th>
+                                <th th:text="#{admin.item.table.stock}">在庫</th>
+                                <th th:text="#{admin.item.table.status}">状態</th>
+                                <th th:text="#{admin.item.table.update}">価格変更</th>
+                                <th th:text="#{admin.item.table.stock.update}">在庫変更</th>
+                                <th th:text="#{admin.item.table.action}">販売状態の変更</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr th:each="item : ${items}">
+                                <td th:text="${item.id}"></td>
+                                <td th:text="${item.name}"></td>
+                                <td th:text="${item.category}"></td>
+                                <td th:text="${item.company}"></td>
+                                <td th:text="${item.price} + #{shop.currency.suffix}">0円</td>
+                                <td th:text="${item.stock} + #{shop.stock.unit}">10個</td>
+                                <td>
+                                    <span th:if="${item.active}" class="status-badge status-active"
+                                        th:text="#{admin.item.status.active}">販売中</span>
+                                    <span th:unless="${item.active}" class="status-badge status-inactive"
+                                        th:text="#{admin.item.status.inactive}">販売停止</span>
+                                </td>
+                                <td>
+                                    <form class="table-form" action="/admin/update-price" method="post">
+                                        <input type="hidden" name="id" th:value="${item.id}">
+                                        <input type="number" name="price" min="0" th:value="${item.price}" required>
+                                        <input type="submit" th:value="#{admin.item.btn.update}" value="価格変更">
+                                    </form>
+                                </td>
+                                <td>
+                                    <form class="table-form" action="/admin/update-stock" method="post">
+                                        <input type="hidden" name="id" th:value="${item.id}">
+                                        <input type="number" name="stock" min="0" th:value="${item.stock}" required>
+                                        <input type="submit" th:value="#{admin.item.btn.stock.update}" value="在庫変更">
+                                    </form>
+                                </td>
+                                <td>
+                                    <form th:if="${item.active}" class="table-form" action="/admin/delete-item"
+                                        method="post">
+                                        <input type="hidden" name="id" th:value="${item.id}">
+                                        <input class="button-danger" type="submit" th:value="#{admin.item.btn.stop}"
+                                            value="販売停止">
+                                    </form>
+
+                                    <form th:unless="${item.active}" class="table-form" action="/admin/restart-item"
+                                        method="post">
+                                        <input type="hidden" name="id" th:value="${item.id}">
+                                        <input class="button-success" type="submit" th:value="#{admin.item.btn.restart}"
+                                            value="販売再開">
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="section-card" style="margin-top: 20px;">
+                <h2 class="section-title">
+                    <span class="section-icon" aria-hidden="true">📜</span>
+                    <span th:text="#{admin.history.title}">購入履歴</span>
+                </h2>
+
+                <p th:if="${orderHistory.isEmpty()}" class="empty-state" th:text="#{admin.history.empty}">まだ購入履歴はありません。
+                </p>
+
+                <div class="table-scroll" th:if="${!orderHistory.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th th:text="#{admin.history.table.orderid}">注文番号</th>
+                                <th th:text="#{admin.history.table.ordertime}">購入日時</th>
+                                <th th:text="#{admin.history.table.customerName}">顧客名</th>
+                                <th th:text="#{admin.history.table.customerEmail}">メールアドレス</th>
+                                <th th:text="#{admin.history.table.customerAddress}">住所</th>
+                                <th th:text="#{admin.history.table.itemname}">商品名</th>
+                                <th th:text="#{admin.history.table.price}">購入時価格</th>
+                                <th th:text="#{admin.history.table.quantity}">個数</th>
+                                <th th:text="#{admin.history.table.subtotal}">小計</th>
+                                <th th:text="#{admin.history.table.total}">注文合計</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr th:each="order : ${orderHistory}">
+                                <td th:text="${order.orderId}"></td>
+                                <td th:text="${order.orderTime}"></td>
+                                <td th:text="${order.customerName}"></td>
+                                <td th:text="${order.customerEmail}"></td>
+                                <td th:text="${order.customerAddress}"></td>
+                                <td th:text="${order.itemName}"></td>
+                                <td th:text="${order.price} + #{shop.currency.suffix}"></td>
+                                <td th:text="${order.quantity}"></td>
+                                <td th:text="${order.subtotal} + #{shop.currency.suffix}"></td>
+                                <td th:text="${order.totalPrice} + #{shop.currency.suffix}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="action-row">
+                <a class="button button-secondary" href="/nazoshop" th:text="#{admin.back}">ショップへ戻る</a>
+            </div>
+
+            <p class="footer-note">NAZO GAME STORE MANAGEMENT SYSTEM</p>
+        </main>
+    </div>
+</body>
+
+</html>
