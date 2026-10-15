@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{checkout.title}">顧客情報入力</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <div class="page-box">
+        <header class="site-header">
+            <a class="brand" href="/nazoshop">
+                <span class="brand-icon" aria-hidden="true">🧾</span>
+                <span class="brand-copy">
+                    <span class="brand-name">Checkout</span>
+                    <span class="brand-subtitle">Complete Your Mission</span>
+                </span>
+            </a>
+
+            <nav class="language-switcher" aria-label="Language">
+                <a th:href="@{/checkout(lang='ja')}">日本語</a>
+                <a th:href="@{/checkout(lang='en')}">English</a>
+                <a th:href="@{/checkout(lang='zh')}">中文</a>
+            </nav>
+        </header>
+
+        <main class="page-content">
+            <section class="hero">
+                <span class="eyebrow">Final Step</span>
+                <h1 th:text="#{checkout.header}">顧客情報を入力してください</h1>
+            </section>
+
+            <p th:if="${param.inputError != null}" class="error-message" style="margin-top: 22px;"
+                th:text="#{checkout.input.error}">入力内容を確認してください。</p>
+
+            <div class="section-grid">
+                <section class="section-card">
+                    <h2 class="section-title">
+                        <span class="section-icon" aria-hidden="true">📦</span>
+                        <span th:text="#{checkout.order.title}">注文内容</span>
+                    </h2>
+
+                    <div class="table-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th th:text="#{cart.table.name}">商品名</th>
+                                    <th th:text="#{cart.table.price}">単価</th>
+                                    <th th:text="#{cart.table.quantity}">個数</th>
+                                    <th th:text="#{cart.table.subtotal}">小計</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${cart}">
+                                    <td th:text="${item.name}"></td>
+                                    <td th:text="${item.price} + #{shop.currency.suffix}"></td>
+                                    <td th:text="${item.quantity}"></td>
+                                    <td th:text="${item.price * item.quantity} + #{shop.currency.suffix}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="total-panel">
+                        <p class="total-label" th:text="#{cart.total.label}">合計金額：</p>
+                        <p class="total-value" th:text="${totalPrice} + #{shop.currency.suffix}">0円</p>
+                    </div>
+                </section>
+
+                <section class="section-card">
+                    <h2 class="section-title">
+                        <span class="section-icon" aria-hidden="true">👤</span>
+                        <span th:text="#{checkout.customer.title}">顧客情報</span>
+                    </h2>
+
+                    <form action="/buy" method="post">
+                        <div class="form-field">
+                            <label for="customerName" th:text="#{checkout.customer.name}">氏名：</label>
+                            <input id="customerName" type="text" name="customerName" maxlength="100" autocomplete="name"
+                                required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="email" th:text="#{checkout.customer.email}">メールアドレス：</label>
+                            <input id="email" type="email" name="email" maxlength="255" autocomplete="email" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="address" th:text="#{checkout.customer.address}">住所：</label>
+                            <textarea id="address" name="address" rows="4" maxlength="255" autocomplete="street-address"
+                                required></textarea>
+                        </div>
+
+                        <div class="action-row">
+                            <input class="button-violet" type="submit" th:value="#{checkout.buy.button}"
+                                value="注文を確定する">
+                            <a class="button button-secondary" href="/nazocart" th:text="#{checkout.back}">カートへ戻る</a>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <p class="footer-note">SECURE ORDER CHECKOUT</p>
+        </main>
+    </div>
+</body>
+
+</html>
